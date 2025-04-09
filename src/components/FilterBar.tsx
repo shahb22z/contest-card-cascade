@@ -20,14 +20,14 @@ const FilterBar: React.FC = () => {
       <div className="flex flex-col md:flex-row gap-4">
         <div className="w-full md:w-1/4">
           <Select
-            value={filters.country || ""}
-            onValueChange={(value) => setFilter('country', value || null)}
+            value={filters.country || "all"}
+            onValueChange={(value) => setFilter('country', value === "all" ? null : value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select Country" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Countries</SelectItem>
+              <SelectItem value="all">All Countries</SelectItem>
               {countries.map(country => (
                 <SelectItem key={country} value={country}>{country}</SelectItem>
               ))}
@@ -37,15 +37,15 @@ const FilterBar: React.FC = () => {
         
         <div className="w-full md:w-1/4">
           <Select
-            value={filters.state || ""}
-            onValueChange={(value) => setFilter('state', value || null)}
+            value={filters.state || "all"}
+            onValueChange={(value) => setFilter('state', value === "all" ? null : value)}
             disabled={!filters.country}
           >
             <SelectTrigger>
               <SelectValue placeholder={filters.country ? "Select State" : "Select Country First"} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All States</SelectItem>
+              <SelectItem value="all">All States</SelectItem>
               {filters.country && states[filters.country]?.map(state => (
                 <SelectItem key={state} value={state}>{state}</SelectItem>
               ))}
