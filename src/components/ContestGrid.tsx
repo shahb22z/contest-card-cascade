@@ -5,7 +5,13 @@ import { useContestStore } from '@/store/contestStore';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const ContestGrid: React.FC = () => {
-  const { filteredContests, isLoading } = useContestStore();
+  const { filteredContests, isLoading, setFilter } = useContestStore();
+  
+  // Ensure user's country is set on initial load
+  useEffect(() => {
+    // Set default country filter
+    setFilter('country', 'United States');
+  }, []);
 
   if (isLoading) {
     return (
