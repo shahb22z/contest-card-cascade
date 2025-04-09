@@ -8,10 +8,11 @@ import { Contest, useContestStore } from '@/store/contestStore';
 interface ContestCardProps {
   contest: Contest;
   index: number;
+  onSelect: (contestId: string) => void;
 }
 
-const ContestCard: React.FC<ContestCardProps> = ({ contest, index }) => {
-  const { selectedContestId, selectContest } = useContestStore();
+const ContestCard: React.FC<ContestCardProps> = ({ contest, index, onSelect }) => {
+  const { selectedContestId } = useContestStore();
   const isSelected = selectedContestId === contest.id;
 
   // Format date for display
@@ -28,7 +29,7 @@ const ContestCard: React.FC<ContestCardProps> = ({ contest, index }) => {
   const animationDelay = `${index * 100}ms`;
 
   const handleCardClick = () => {
-    selectContest(contest.id);
+    onSelect(contest.id);
   };
 
   return (
@@ -70,10 +71,8 @@ const ContestCard: React.FC<ContestCardProps> = ({ contest, index }) => {
       
       <CardFooter className="p-4 pt-0 flex justify-between items-center">
         <div className="text-xs text-gray-500">By {contest.organizer}</div>
-        <Badge variant="outline" className={`${
-          isSelected ? 'bg-purple-200 text-purple-800' : 'bg-purple-50 text-purple-700'
-        } hover:bg-purple-100 border-purple-200`}>
-          {isSelected ? 'Selected' : 'View Details'}
+        <Badge variant="outline" className="bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200">
+          View Details
         </Badge>
       </CardFooter>
     </Card>

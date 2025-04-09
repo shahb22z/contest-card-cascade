@@ -1,9 +1,14 @@
+
 import React, { useEffect } from 'react';
 import ContestCard from './ContestCard';
 import { useContestStore } from '@/store/contestStore';
 import { Skeleton } from '@/components/ui/skeleton';
 
-const ContestGrid: React.FC = () => {
+interface ContestGridProps {
+  onSelectContest: (contestId: string) => void;
+}
+
+const ContestGrid: React.FC<ContestGridProps> = ({ onSelectContest }) => {
   const { filteredContests, isLoading, setUserLocationFilters } = useContestStore();
   
   // Apply user location filters on initial load
@@ -42,7 +47,12 @@ const ContestGrid: React.FC = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {filteredContests.map((contest, index) => (
-        <ContestCard key={contest.id} contest={contest} index={index} />
+        <ContestCard 
+          key={contest.id} 
+          contest={contest} 
+          index={index} 
+          onSelect={onSelectContest}
+        />
       ))}
     </div>
   );
