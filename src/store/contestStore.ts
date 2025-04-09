@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 
 // Types
@@ -18,104 +17,48 @@ export interface Contest {
   organizer: string;
 }
 
+interface UserLocation {
+  country: string;
+  state: string;
+  city: string;
+}
+
 interface ContestStore {
   contests: Contest[];
   filteredContests: Contest[];
-  countries: string[];
-  states: Record<string, string[]>;  // states by country
-  filters: {
-    country: string | null;
-    state: string | null;
-    searchTerm: string;
-  };
+  userLocation: UserLocation;
   isLoading: boolean;
   // Actions
   setContests: (contests: Contest[]) => void;
-  setFilter: (key: 'country' | 'state' | 'searchTerm', value: string | null) => void;
-  clearFilters: () => void;
+  setUserLocationFilters: () => void;
   fetchContests: () => Promise<void>;
 }
 
 export const useContestStore = create<ContestStore>((set, get) => ({
   contests: [],
   filteredContests: [],
-  countries: [],
-  states: {},
-  filters: {
-    country: null,
-    state: null,
-    searchTerm: '',
+  // Simulated user's location - in a real app this would come from geolocation API or user profile
+  userLocation: {
+    country: "India",
+    state: "Delhi",
+    city: "Delhi"
   },
   isLoading: false,
   
   setContests: (contests) => {
-    const countries = [...new Set(contests.map(contest => contest.location.country))].sort();
-    const states: Record<string, string[]> = {};
-    
-    // Group states by country
-    countries.forEach(country => {
-      const countryContests = contests.filter(c => c.location.country === country);
-      states[country] = [...new Set(countryContests.map(c => c.location.state))].sort();
-    });
-    
-    set({ 
-      contests, 
-      filteredContests: contests,
-      countries,
-      states
-    });
+    set({ contests });
   },
   
-  setFilter: (key, value) => {
-    const { contests, filters } = get();
-    const newFilters = { ...filters, [key]: value };
+  setUserLocationFilters: () => {
+    const { contests, userLocation } = get();
     
-    // If country changed and state is set, reset state if it doesn't belong to the new country
-    if (key === 'country' && filters.state && 
-        value !== null && 
-        !get().states[value].includes(filters.state)) {
-      newFilters.state = null;
-    }
-
-    // Apply filters
-    let filtered = contests;
+    // Filter contests based on user's location (country and city)
+    const filtered = contests.filter(contest => 
+      contest.location.country === userLocation.country && 
+      contest.location.state === userLocation.state
+    );
     
-    if (newFilters.country) {
-      filtered = filtered.filter(contest => 
-        contest.location.country === newFilters.country
-      );
-    }
-    
-    if (newFilters.state) {
-      filtered = filtered.filter(contest => 
-        contest.location.state === newFilters.state
-      );
-    }
-    
-    if (newFilters.searchTerm) {
-      const searchLower = newFilters.searchTerm.toLowerCase();
-      filtered = filtered.filter(contest => 
-        contest.title.toLowerCase().includes(searchLower) || 
-        contest.description.toLowerCase().includes(searchLower) ||
-        contest.category.toLowerCase().includes(searchLower)
-      );
-    }
-    
-    set({ 
-      filters: newFilters,
-      filteredContests: filtered 
-    });
-  },
-  
-  clearFilters: () => {
-    set(state => ({ 
-      filters: {
-        country: null,
-        state: null,
-        searchTerm: ''
-      },
-      filteredContests: state.contests 
-    }));
+    set({ filteredContests: filtered });
   },
   
   fetchContests: async () => {
@@ -127,6 +70,7 @@ export const useContestStore = create<ContestStore>((set, get) => ({
       await new Promise(resolve => setTimeout(resolve, 800));
       const contests = getMockContests();
       get().setContests(contests);
+      get().setUserLocationFilters();
     } catch (error) {
       console.error("Failed to fetch contests:", error);
     } finally {
@@ -316,5 +260,50 @@ const getMockContests = (): Contest[] => [
     },
     category: "Literature",
     organizer: "Literary Society"
+  },
+  {
+    id: "13",
+    title: "Delhi Tech Hackathon",
+    description: "Join the largest coding competition in Delhi. Build innovative solutions for urban challenges.",
+    date: "2025-06-10",
+    time: "10:00 AM",
+    imageUrl: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d",
+    location: {
+      country: "India",
+      state: "Delhi",
+      city: "Delhi"
+    },
+    category: "Technology",
+    organizer: "Delhi Tech Association"
+  },
+  {
+    id: "14",
+    title: "Indian Classical Music Competition",
+    description: "Showcase your talent in Indian classical music and get recognized by renowned musicians.",
+    date: "2025-07-05",
+    time: "05:00 PM",
+    imageUrl: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae",
+    location: {
+      country: "India",
+      state: "Delhi",
+      city: "Delhi"
+    },
+    category: "Music",
+    organizer: "Cultural Heritage Foundation"
+  },
+  {
+    id: "15",
+    title: "Delhi Fashion Week",
+    description: "The biggest fashion event in Delhi showcasing both traditional and contemporary designs.",
+    date: "2025-08-12",
+    time: "03:00 PM",
+    imageUrl: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b",
+    location: {
+      country: "India",
+      state: "Delhi",
+      city: "Delhi"
+    },
+    category: "Fashion",
+    organizer: "Indian Fashion Council"
   }
 ];

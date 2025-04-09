@@ -1,16 +1,14 @@
-
 import React, { useEffect } from 'react';
 import ContestCard from './ContestCard';
 import { useContestStore } from '@/store/contestStore';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const ContestGrid: React.FC = () => {
-  const { filteredContests, isLoading, setFilter } = useContestStore();
+  const { filteredContests, isLoading, setUserLocationFilters } = useContestStore();
   
-  // Ensure user's country is set on initial load
+  // Apply user location filters on initial load
   useEffect(() => {
-    // Set default country filter
-    setFilter('country', 'United States');
+    setUserLocationFilters();
   }, []);
 
   if (isLoading) {
@@ -35,8 +33,8 @@ const ContestGrid: React.FC = () => {
   if (filteredContests.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-10 text-center">
-        <h3 className="text-2xl font-semibold mb-2">No contests found</h3>
-        <p className="text-gray-500 mb-6">Try adjusting your filters or search term</p>
+        <h3 className="text-2xl font-semibold mb-2">No contests found in your area</h3>
+        <p className="text-gray-500 mb-6">There are currently no contests available in your location</p>
       </div>
     );
   }
