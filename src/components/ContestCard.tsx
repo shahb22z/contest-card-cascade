@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin } from "lucide-react";
-import { Contest } from '@/store/contestStore';
+import { Contest, useContestStore } from '@/store/contestStore';
 
 interface ContestCardProps {
   contest: Contest;
@@ -11,6 +11,9 @@ interface ContestCardProps {
 }
 
 const ContestCard: React.FC<ContestCardProps> = ({ contest, index }) => {
+  const { selectedContestId, selectContest } = useContestStore();
+  const isSelected = selectedContestId === contest.id;
+
   // Format date for display
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -24,9 +27,18 @@ const ContestCard: React.FC<ContestCardProps> = ({ contest, index }) => {
   // Calculate animation delay based on index for staggered animation
   const animationDelay = `${index * 100}ms`;
 
+  const handleCardClick = () => {
+    selectContest(contest.id);
+  };
+
   return (
-    <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow duration-300 opacity-0 animate-card-enter hover:scale-[1.02]" 
-      style={{ animationDelay }}>
+    <Card 
+      className={`h-full overflow-hidden hover:shadow-lg transition-shadow duration-300 opacity-0 animate-card-enter hover:scale-[1.02] cursor-pointer ${
+        isSelected ? 'ring-2 ring-purple-500 ring-offset-2' : ''
+      }`}
+      style={{ animationDelay }}
+      onClick={handleCardClick}
+    >
       <div className="h-48 overflow-hidden relative">
         <img 
           src={`${contest.imageUrl}?w=600&h=300&fit=crop`} 
@@ -58,8 +70,10 @@ const ContestCard: React.FC<ContestCardProps> = ({ contest, index }) => {
       
       <CardFooter className="p-4 pt-0 flex justify-between items-center">
         <div className="text-xs text-gray-500">By {contest.organizer}</div>
-        <Badge variant="outline" className="bg-purple-50 text-purple-700 hover:bg-purple-100 border-purple-200">
-          View Details
+        <Badge variant="outline" className={`${
+          isSelected ? 'bg-purple-200 text-purple-800' : 'bg-purple-50 text-purple-700'
+        } hover:bg-purple-100 border-purple-200`}>
+          {isSelected ? 'Selected' : 'View Details'}
         </Badge>
       </CardFooter>
     </Card>

@@ -1,6 +1,19 @@
+
 import { create } from 'zustand';
 
 // Types
+export interface Round {
+  id: string;
+  contestId: string;
+  name: string;
+  description: string;
+  date: string;
+  time: string;
+  duration: string;
+  venue?: string;
+  status: 'upcoming' | 'ongoing' | 'completed';
+}
+
 export interface Contest {
   id: string;
   title: string;
@@ -26,17 +39,23 @@ interface UserLocation {
 interface ContestStore {
   contests: Contest[];
   filteredContests: Contest[];
+  rounds: Round[];
+  selectedContestId: string | null;
   userLocation: UserLocation;
   isLoading: boolean;
   // Actions
   setContests: (contests: Contest[]) => void;
   setUserLocationFilters: () => void;
   fetchContests: () => Promise<void>;
+  selectContest: (contestId: string) => void;
+  getContestRounds: (contestId: string) => Round[];
 }
 
 export const useContestStore = create<ContestStore>((set, get) => ({
   contests: [],
   filteredContests: [],
+  rounds: [],
+  selectedContestId: null,
   // Simulated user's location - in a real app this would come from geolocation API or user profile
   userLocation: {
     country: "India",
@@ -61,6 +80,14 @@ export const useContestStore = create<ContestStore>((set, get) => ({
     set({ filteredContests: filtered });
   },
   
+  selectContest: (contestId) => {
+    set({ selectedContestId: contestId });
+  },
+  
+  getContestRounds: (contestId) => {
+    return get().rounds.filter(round => round.contestId === contestId);
+  },
+  
   fetchContests: async () => {
     set({ isLoading: true });
     
@@ -69,7 +96,8 @@ export const useContestStore = create<ContestStore>((set, get) => ({
       // For now, we'll simulate a delay and return mock data
       await new Promise(resolve => setTimeout(resolve, 800));
       const contests = getMockContests();
-      get().setContests(contests);
+      const rounds = getMockRounds();
+      set({ contests, rounds });
       get().setUserLocationFilters();
     } catch (error) {
       console.error("Failed to fetch contests:", error);
@@ -305,5 +333,97 @@ const getMockContests = (): Contest[] => [
     },
     category: "Fashion",
     organizer: "Indian Fashion Council"
+  }
+];
+
+// Mock rounds data
+const getMockRounds = (): Round[] => [
+  {
+    id: "r1",
+    contestId: "13",
+    name: "Round 1: Preliminary",
+    description: "Initial coding challenge to assess basic algorithm knowledge",
+    date: "2025-06-10",
+    time: "10:00 AM",
+    duration: "2 hours",
+    venue: "Online",
+    status: "upcoming"
+  },
+  {
+    id: "r2",
+    contestId: "13",
+    name: "Round 2: Semi-Final",
+    description: "Advanced problem solving with focus on optimization",
+    date: "2025-06-15",
+    time: "02:00 PM", 
+    duration: "3 hours",
+    venue: "Delhi Tech Hub",
+    status: "upcoming"
+  },
+  {
+    id: "r3",
+    contestId: "13",
+    name: "Round 3: Final",
+    description: "Live coding challenge with real-world problems",
+    date: "2025-06-20",
+    time: "11:00 AM",
+    duration: "4 hours",
+    venue: "Delhi Convention Center",
+    status: "upcoming"
+  },
+  {
+    id: "r4",
+    contestId: "14",
+    name: "Round 1: Audition",
+    description: "Perform a classical piece of your choice",
+    date: "2025-07-05",
+    time: "05:00 PM",
+    duration: "15 minutes per participant",
+    venue: "Delhi Music Academy",
+    status: "upcoming"
+  },
+  {
+    id: "r5",
+    contestId: "14",
+    name: "Round 2: Final Performance",
+    description: "Perform with accompanying orchestra",
+    date: "2025-07-12",
+    time: "06:00 PM",
+    duration: "20 minutes per finalist",
+    venue: "Delhi Concert Hall",
+    status: "upcoming"
+  },
+  {
+    id: "r6",
+    contestId: "15",
+    name: "Round 1: Portfolio Review",
+    description: "Submit your fashion design portfolio",
+    date: "2025-08-12",
+    time: "03:00 PM",
+    duration: "1 day for review",
+    venue: "Online Submission",
+    status: "upcoming"
+  },
+  {
+    id: "r7",
+    contestId: "15",
+    name: "Round 2: Design Challenge",
+    description: "Create a design based on the provided theme",
+    date: "2025-08-15",
+    time: "10:00 AM",
+    duration: "8 hours",
+    venue: "Delhi Fashion Institute",
+    status: "upcoming"
+  },
+  {
+    id: "r8",
+    contestId: "15",
+    name: "Round 3: Runway Show",
+    description: "Present your final designs on the runway",
+    date: "2025-08-20",
+    time: "07:00 PM",
+    duration: "3 hours",
+    venue: "Delhi Fashion Week Venue",
+    status: "upcoming"
   }
 ];

@@ -3,11 +3,11 @@ import React, { useEffect } from 'react';
 import Header from '@/components/Header';
 import FilterBar from '@/components/FilterBar';
 import ContestGrid from '@/components/ContestGrid';
+import ContestRounds from '@/components/ContestRounds';
 import { useContestStore } from '@/store/contestStore';
-import { Button } from '@/components/ui/button';
 
 const Index: React.FC = () => {
-  const { fetchContests, isLoading } = useContestStore();
+  const { fetchContests, isLoading, selectedContestId } = useContestStore();
 
   useEffect(() => {
     fetchContests();
@@ -20,6 +20,7 @@ const Index: React.FC = () => {
         <FilterBar />
         <div className="min-h-[300px]">
           <ContestGrid />
+          {selectedContestId && <ContestRounds contestId={selectedContestId} />}
           {isLoading && (
             <div className="fixed inset-0 bg-black/5 flex items-center justify-center pointer-events-none">
               <div className="bg-white p-4 rounded-lg shadow-lg animate-pulse">
