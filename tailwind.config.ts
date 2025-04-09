@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,11 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				purple: {
+					light: '#9b87f5',
+					DEFAULT: '#8B5CF6',
+					dark: '#7E69AB'
 				}
 			},
 			borderRadius: {
@@ -84,11 +90,40 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'card-enter': {
+					'0%': { 
+						opacity: '0',
+						transform: 'translateY(10px) scale(0.95)'
+					},
+					'100%': { 
+						opacity: '1',
+						transform: 'translateY(0) scale(1)'
+					}
+				},
+				'float': {
+					'0%, 100%': {
+						transform: 'translateY(0)'
+					},
+					'50%': {
+						transform: 'translateY(-5px)'
+					}
+				},
+				'pulse-light': {
+					'0%, 100%': {
+						opacity: '1'
+					},
+					'50%': {
+						opacity: '0.85'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'card-enter': 'card-enter 0.4s ease-out forwards',
+				'float': 'float 3s ease-in-out infinite',
+				'pulse-light': 'pulse-light 2s ease-in-out infinite'
 			}
 		}
 	},
